@@ -32,6 +32,9 @@ class ZipWriter
   // 添加单个文件
   void add_file(const std::string& file_path, const std::string& base_path = "");
 
+  // 添加内存数据作为文件
+  void add_data(const std::string& filename_in_zip, const void* data, size_t size);
+
   // 添加整个文件夹（递归）
   void add_folder(const std::string& folder_path);
 

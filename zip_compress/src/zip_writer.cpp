@@ -57,6 +57,19 @@ void ZipWriter::add_file(const std::string& file_path_str, const std::string& ba
   }
 }
 
+void ZipWriter::add_data(const std::string& filename_in_zip, const void* data, size_t size)
+{
+  if (data == nullptr)
+  {
+    throw std::invalid_argument("add_data: data is null");
+  }
+
+  if (!mz_zip_writer_add_mem(&zip_, filename_in_zip.c_str(), data, size, MZ_DEFAULT_LEVEL))
+  {
+    throw std::runtime_error("Failed to add data to ZIP: " + filename_in_zip);
+  }
+}
+
 void ZipWriter::add_folder(const std::string& folder_path_str)
 {
   fs::path folder_path(folder_path_str);
