@@ -109,4 +109,29 @@ void ZipReader::extract_file(const std::string& file_name_in_zip, const std::str
   }
 }
 
+std::vector<uint8_t> ZipReader::extract_file_to_memory(const std::string& file_name_in_zip)
+{
+  if (!opened_) throw std::runtime_error("ZIP file not opened");
+
+  int file_index = mz_zip_reader_locate_file(&zip_, file_name_in_zip.c_str(), nullptr, 0);
+  if (file_index < 0)
+  {
+    throw std::runtime_error("File not found in ZIP: " + file_name_in_zip);
+  }
+
+  mz_zip_archive_file_stat stat;
+  if (!mz_zip_reader_file_stat(&zip_, file_index, &stat))
+  {
+    throw std::runtime_error("Failed to get file info: " + file_name_in_zip);
+  }
+
+  std::vector<uint8_t> buffer(stat.m_uncomp_size);
+  if (!mz_zip_reader_extract_to_mem(&zip_, file_index, buffer.data(), buffer.size(), 0))
+  {
+    throw std::runtime_error("Failed to extract file to memory: " + file_name_in_zip);
+  }
+
+  return buffer;
+}
+
 }  // namespace zip_compress

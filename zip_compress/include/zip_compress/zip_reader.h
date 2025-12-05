@@ -40,6 +40,9 @@ class ZipReader
   // 解压单个文件到指定路径
   void extract_file(const std::string& file_name_in_zip, const std::string& output_path);
 
+  // 解压单个文件到内存, 返回数据
+  std::vector<uint8_t> extract_file_to_memory(const std::string& file_name_in_zip);
+
  private:
   mz_zip_archive zip_;
   bool opened_;
