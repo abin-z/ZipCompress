@@ -15,3 +15,8 @@ target_link_libraries(${tgt_name} PRIVATE ghc_filesystem)
 target_include_directories(${tgt_name}  PRIVATE
     ${PROJECT_SOURCE_DIR}/3rd/Catch2/single_include
 )
+
+# -------------------------------------------------------
+# 告诉 CTest：这个可执行程序是一个测试
+# -------------------------------------------------------
+add_test(NAME ${tgt_name} COMMAND ${tgt_name})
