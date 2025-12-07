@@ -33,7 +33,6 @@ static std::string read_file(const std::string& path)
   REQUIRE(ifs.is_open());
   return std::string((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 }
-
 TEST_CASE("ZipWriter + ZipReader basic tests")
 {
   const fs::path zip_path = "test.zip";
@@ -41,20 +40,20 @@ TEST_CASE("ZipWriter + ZipReader basic tests")
 
   fs::create_directories(tmp_dir);
 
-  // 准备测试文件
+  // 准备文件
   write_file((tmp_dir / "a.txt").string(), "AAA");
   write_file((tmp_dir / "b.txt").string(), "BBB");
 
-  SECTION("Create ZIP and add files")
+  //
+  // ★★★★★ 所有 SECTION 公用相同的 ZIP
+  //
   {
     ZipWriter writer(zip_path.string());
-
     writer.add_file((tmp_dir / "a.txt").string());
     writer.add_file((tmp_dir / "b.txt").string());
-
     const char mem_data[] = "hello mem!";
     writer.add_data("mem.txt", mem_data, sizeof(mem_data) - 1);
-  }
+  }  // writer 退出 → zip 写入完成
 
   SECTION("ZipReader file list")
   {
@@ -84,12 +83,9 @@ TEST_CASE("ZipWriter + ZipReader basic tests")
   SECTION("Extract file to memory")
   {
     ZipReader reader(zip_path.string());
-
     auto data = reader.extract_file_to_memory("mem.txt");
     REQUIRE(!data.empty());
-
-    std::string mem(data.begin(), data.end());
-    REQUIRE(mem == "hello mem!");
+    REQUIRE(std::string(data.begin(), data.end()) == "hello mem!");
   }
 
   // 清理
