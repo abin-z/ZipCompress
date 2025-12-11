@@ -1,4 +1,5 @@
 // 避免 Windows min/max 宏污染
+#include <string>
 #ifdef _WIN32
 #define NOMINMAX
 #endif
@@ -137,14 +138,33 @@ void test_zip_extraction()
   }
 }
 
+void test_update_package()
+{
+  std::string zip_path = "upgrade_package.zip";
+  std::string extract_folder = "./upgrade_extracted";
+  fs::create_directories(extract_folder);
+  try
+  {
+    zip_compress::ZipReader reader(zip_path);
+    reader.extract_all(extract_folder);
+    std::cout << "Upgrade package extracted to: " << extract_folder << std::endl;
+  }
+  catch (const std::exception& e)
+  {
+    std::cerr << "!!!!! Update package extraction exception: " << e.what() << std::endl;
+  }
+}
+
+
 int main()
 {
 #if defined(_WIN32)
   std::system("chcp 65001 > nul");  // 切换到 UTF-8 编码（仅 Windows）
 #endif
   std::cout << u8"你好，世界！" << std::endl;
-  test_zip_compression();
-  test_compress_multilevel_folder("test_folder", "folder_test.zip");
-  test_zip_extraction();
+  // test_zip_compression();
+  // test_compress_multilevel_folder("test_folder", "folder_test.zip");
+  // test_zip_extraction();
+  test_update_package();
   return 0;
 }
